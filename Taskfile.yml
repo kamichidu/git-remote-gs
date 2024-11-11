@@ -1,0 +1,28 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  BINDIR: .local/bin
+
+interval: 100ms
+
+tasks:
+  build:
+    cmds:
+      - merge.sh -r .
+      - chmod +x git-remote-gs
+    sources:
+      - src/*
+
+  init:
+    cmds:
+      - |
+        mkdir -p '{{.BINDIR}}'
+        cd '{{.BINDIR}}'
+        curl -LO https://github.com/soliyte/bash-merger/releases/download/v1.0/merge.sh
+        chmod +x merge.sh
+      - |
+        if [[ ! -r '.envrc' ]]; then
+          cp -i -v envrc.sample .envrc
+        fi

@@ -1,0 +1,17 @@
+= git-remote-gs
+
+Cloud Storage as a git remote.
+
+This tool provides git remote schema for Cloud Storage.
+
+== Usage
+
+TODO
+
+=== Remote Repository Management
+
+[source, bash]
+----
+git remote-gs create gs://BUCKET/PATH
+git remote-gs delete gs://BUCKET/PATH
+----
