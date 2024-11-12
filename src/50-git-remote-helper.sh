@@ -2,8 +2,6 @@
 
 # See https://git-scm.com/docs/gitremote-helpers
 
-set -e -u -o pipefail
-
 __remote="${1}"
 __url="${2:-}"
 
@@ -11,29 +9,8 @@ if [[ -z "${__url}" ]]; then
     __url="$(git remote get-url "${__remote}")"
 fi
 
-urlencode() {
-    jq -Rr @uri <<<"${1}"
-}
-
 __tmpdir="$(dirname "$(mktemp --dry-run)")"
-__tmpdir="${__tmpdir}/$(urlencode "${__url}")"
-
-__log_pipe() {
-    local line
-    while read line; do
-        if [[ -z "${GIT_GS_TRACE:-}" ]]; then
-            continue
-        fi
-        echo "*** ${line}" 1>&2
-    done
-}
-
-__log() {
-    if [[ -z "${GIT_GS_TRACE:-}" ]]; then
-        return 0
-    fi
-    echo "*** ${*}" 1>&2
-}
+__tmpdir="${__tmpdir}/$(__urlencode "${__url}")"
 
 __log <<EOF
 args   = ${@}
@@ -41,20 +18,6 @@ remote = ${__remote}
 url    = ${__url}
 tmpdir = ${__tmpdir}
 EOF
-
-__state-pull() {
-    gcloud storage rsync "${__url}" "${__tmpdir}" \
-        --recursive \
-        --delete-unmatched-destination-objects \
-        2>&1 | __log_pipe
-}
-
-__state-push() {
-    gcloud storage rsync "${__tmpdir}" "${__url}" \
-        --recursive \
-        --delete-unmatched-destination-objects \
-        2>&1 | __log_pipe
-}
 
 capabilities() {
     echo '*push'

@@ -19,6 +19,9 @@ tasks:
     cmds:
       - |
         mkdir -p '{{.BINDIR}}'
+        ln -snf ../../git-remote-gs .local/bin/git-remote-gs
+      - |
+        mkdir -p '{{.BINDIR}}'
         cd '{{.BINDIR}}'
         curl -LO https://github.com/soliyte/bash-merger/releases/download/v1.0/merge.sh
         chmod +x merge.sh
